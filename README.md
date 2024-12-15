@@ -1,135 +1,27 @@
 # Credit Card Management API
 
-This project is a REST API for managing customers and credit cards. It is built with **Spring Boot**, uses **Hibernate** as the ORM, and **PostgreSQL** as the database. Additionally, it includes configuration for deploying the project using **Docker**.
+This project is a **REST API** for managing customers and credit cards. It is built with **Spring Boot**, uses Hibernate as the ORM, and PostgreSQL as the database. The project includes configurations for both **local execution** and **Docker deployment**.
 
-## Requirements
+---
 
-Before running the project, ensure the following requirements are met:
+## Features
+- Manage customers (create, update, delete, retrieve).
+- Manage credit cards associated with customers.
+- Built with clean RESTful API architecture.
+- Database integration with PostgreSQL.
 
-- **Docker** and **Docker Compose** are installed.
-- Port `8080` is available on your machine (you can change it in the `docker-compose.yml` file if needed).
+---
 
-## Configuration
+## Prerequisites
+Ensure you have the following installed:
+- **Java 17** ([Download](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html))
+- **Maven** ([Download](https://maven.apache.org/download.cgi))
+- **PostgreSQL** ([Download](https://www.postgresql.org/))
+- **Docker** and **Docker Compose** (optional for containerized deployment)
 
-### Environment Variables
-
-The project is pre-configured to work with Docker, but you can customize the following environment variables:
-
-- `SPRING_DATASOURCE_URL`: URL of the PostgreSQL database.
-- `SPRING_DATASOURCE_USERNAME`: Database username.
-- `SPRING_DATASOURCE_PASSWORD`: Database password.
-
-These variables are defined in the `application.properties` file and the `docker-compose.yml` file.
-
-### `docker-compose.yml` File
-
-The `docker-compose.yml` file includes two services:
-- `app`: The service running the API.
-- `db`: The service running PostgreSQL.
-
-## Running the Project
-
-### 1. Clone the Repository
-
-```bash
-git clone <repository-url>
-cd credit-card-api
-```
-
-### 2. Build and Run the Project with Docker
-
-Run the following command from the project root:
-
-```bash
-docker-compose up --build
-```
-
-This will:
-1. Build the Docker image for the application.
-2. Start the containers for the application and the PostgreSQL database.
-
-### 3. Verify the Project is Running
-
-Access the API at: [http://localhost:8080/api/customers](http://localhost:8080/api/customers)
-
-### 4. Stop the Containers
-
-When you're done using the application, stop and remove the containers with:
-
-```bash
-docker-compose down
-```
-
-## API Endpoints
-
-### Customers
-
-#### Get All Customers
-- **URL:** `/api/customers`
-- **Method:** `GET`
-
-#### Create a Customer
-- **URL:** `/api/customers`
-- **Method:** `POST`
-- **Empty JSON Body:**
-    ```json
-    {
-        "firstName": "John",
-        "lastName": "Doe",
-        "email": "john.doe@example.com"
-    }
-    ```
-- **JSON Body with Credit Cards:**
-    ```json
-    {
-        "firstName": "John",
-        "lastName": "Doe",
-        "email": "john.doe@example.com",
-        "creditCards": [
-            {
-                "cardNumber": "1234567890123456",
-                "expirationDate": "2025-12-31",
-                "cvv": "123",
-                "cardType": "Credit",
-                "creditLimit": 5000.00,
-                "currentBalance": 2000.00
-            }
-        ]
-    }
-    ```
-
-#### Delete a Customer
-- **URL:** `/api/customers/{id}`
-- **Method:** `DELETE`
-
-### Credit Cards
-
-#### Get All Credit Cards
-- **URL:** `/api/credit-cards`
-- **Method:** `GET`
-
-#### Create a Credit Card
-- **URL:** `/api/credit-cards`
-- **Method:** `POST`
-- **JSON Body:**
-    ```json
-    {
-        "cardNumber": "1234567890123456",
-        "expirationDate": "2025-12-31",
-        "cvv": "123",
-        "cardType": "Credit",
-        "creditLimit": 5000.00,
-        "currentBalance": 2000.00,
-        "customerId": 1
-    }
-    ```
-
-#### Delete a Credit Card
-- **URL:** `/api/credit-cards/{id}`
-- **Method:** `DELETE`
+---
 
 ## Project Structure
-
 ```plaintext
 credit-card-api/
 ├── src/
@@ -139,21 +31,122 @@ credit-card-api/
 │   │   │   ├── core/              # Core models
 │   │   │   ├── infrastructure/    # Controllers and persistence adapters
 │   │   └── resources/
-│   │       ├── application.properties  # Application configuration
+│   │       ├── application.properties  # Database configuration
 │   └── test/                        # Unit tests
-├── Dockerfile                      # Docker image configuration
+├── Dockerfile                      # Backend Dockerfile
 ├── docker-compose.yml              # Docker services configuration
 └── README.md                       # Project documentation
 ```
 
+---
+
+## Running the Project Locally
+
+### 1. Set up PostgreSQL
+1. Start a PostgreSQL instance.
+2. Create a new database named `credit_card_db`.
+3. Update `application.properties` with your PostgreSQL configuration:
+   ```properties
+   spring.datasource.url=jdbc:postgresql://localhost:5432/credit_card_db
+   spring.datasource.username=your_username
+   spring.datasource.password=your_password
+   spring.jpa.hibernate.ddl-auto=update
+   spring.jpa.show-sql=true
+   ```
+
+### 2. Build and Run the Application
+1. Open a terminal and navigate to the project root directory:
+   ```bash
+   cd credit-card-api
+   ```
+2. Use Maven to build and run the project:
+   ```bash
+   mvn clean package
+   java -jar target/*.jar
+   ```
+3. The application will start on **`http://localhost:8080`**.
+
+---
+
+## API Endpoints
+
+### Customers
+| Method | Endpoint                 | Description                 |
+|--------|--------------------------|-----------------------------|
+| GET    | `/api/customers`         | Retrieve all customers      |
+| GET    | `/api/customers/{id}`    | Retrieve a single customer  |
+| POST   | `/api/customers`         | Add a new customer          |
+| PUT    | `/api/customers/{id}`    | Update customer details     |
+| DELETE | `/api/customers/{id}`    | Delete a customer           |
+
+**Example JSON Payload for POST**:
+```json
+{
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@example.com",
+    "creditCards": [
+        {
+            "cardNumber": "1234567890123456",
+            "expirationDate": "2025-12-31",
+            "cvv": "123",
+            "cardType": "Credit",
+            "creditLimit": 5000.00,
+            "currentBalance": 2000.00
+        }
+    ]
+}
+```
+
+### Credit Cards
+| Method | Endpoint                      | Description                       |
+|--------|-------------------------------|-----------------------------------|
+| GET    | `/api/credit-cards`           | Retrieve all credit cards         |
+| POST   | `/api/credit-cards`           | Add a new credit card             |
+| PUT    | `/api/credit-cards/{id}`      | Update credit card details        |
+| DELETE | `/api/credit-cards/{id}`      | Delete a credit card              |
+
+**Example JSON Payload for POST**:
+```json
+{
+    "cardNumber": "1234567890123456",
+    "expirationDate": "2025-12-31",
+    "cvv": "123",
+    "cardType": "Credit",
+    "creditLimit": 5000.00,
+    "currentBalance": 2000.00,
+    "customerId": 1
+}
+```
+
+---
+
+## Testing
+Run the unit tests using Maven:
+```bash
+mvn test
+```
+
+---
+
 ## Notes
+- **Database Initialization**: Hibernate automatically generates database schemas.
+- **API Port**: The application runs on port **8080** by default.
 
-1. **Database:** Database schemas are automatically generated using Hibernate.
-2. **Testing:** You can run project tests with:
-    ```bash
-    mvn test
-    ```
-3. **Contribution:** If you'd like to contribute to the project, ensure you follow best practices for **Spring Boot** and **Docker**.
+---
 
-That's all! 🚀
+## Author
+**Brayan Steven Rodriguez**
+
+---
+
+## License
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+## Acknowledgments
+- **Spring Boot** for backend development.
+- **PostgreSQL** for database management.
+- **Docker** for containerization.
 
