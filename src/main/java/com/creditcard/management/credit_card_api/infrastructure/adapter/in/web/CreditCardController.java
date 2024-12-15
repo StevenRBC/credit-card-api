@@ -55,4 +55,23 @@ public class CreditCardController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    //UPDATE: Update a credit card by ID
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CreditCardDTO> updateCreditCard(@PathVariable Long id, @RequestBody CreditCardDTO creditCardDTO) {
+        return creditCardRepository.findById(id)
+                .map(existingCreditCard -> {
+                    existingCreditCard.setCardNumber(creditCardDTO.getCardNumber());
+                    existingCreditCard.setExpirationDate(creditCardDTO.getExpirationDate());
+                    existingCreditCard.setCvv(creditCardDTO.getCvv());
+                    existingCreditCard.setCardType(creditCardDTO.getCardType());
+                    existingCreditCard.setCreditLimit(creditCardDTO.getCreditLimit());
+                    existingCreditCard.setCurrentBalance(creditCardDTO.getCurrentBalance());
+
+                    CreditCard updatedCreditCard = creditCardRepository.save(existingCreditCard);
+                    return ResponseEntity.ok(CustomerMapper.toCreditCardDTO(updatedCreditCard));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
 }

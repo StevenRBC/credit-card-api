@@ -65,4 +65,20 @@ public class CustomerController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    // UPDATE: Update a customer by ID
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) {
+        return customerRepository.findById(id)
+                .map(existingCustomer -> {
+                    existingCustomer.setFirstName(customerDTO.getFirstName());
+                    existingCustomer.setLastName(customerDTO.getLastName());
+                    existingCustomer.setEmail(customerDTO.getEmail());
+
+                    Customer updatedCustomer = customerRepository.save(existingCustomer);
+                    return ResponseEntity.ok(CustomerMapper.toCustomerDTO(updatedCustomer));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
 }
