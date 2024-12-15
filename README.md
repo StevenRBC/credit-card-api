@@ -136,7 +136,7 @@ mvn test
 ---
 
 ## Author
-**Brayan Steven Rodriguez**
+**Steven Rodriguez**
 
 ---
 
