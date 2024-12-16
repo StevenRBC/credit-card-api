@@ -1,47 +1,23 @@
 package com.creditcard.management.credit_card_api.application.dto;
 
 
-import java.math.BigDecimal;
-import java.sql.Date;
-
 public class CreditCardDTO {
-
-    private Long cardId; // Primary Key
-    private Long customerId; // Foreign Key referencing Customer
+    private Long cardId;
     private String cardNumber;
-    private Date expirationDate;
+    private String expirationDate;
     private String cvv;
-    private String cardType; // Example: 'Credit' or 'Debit'
-    private BigDecimal creditLimit;
-    private BigDecimal currentBalance;
+    private String cardType;
+    private Double creditLimit;
+    private Double currentBalance;
+    private Long customerId;
 
-    public CreditCardDTO(Long cardId, Long customerId, String cardNumber, Date expirationDate, String cvv,
-                         String cardType, BigDecimal creditLimit, BigDecimal currentBalance) {
-        this.cardId = cardId;
-        this.customerId = customerId;
-        this.cardNumber = cardNumber;
-        this.expirationDate = expirationDate;
-        this.cvv = cvv;
-        this.cardType = cardType;
-        this.creditLimit = creditLimit;
-        this.currentBalance = currentBalance;
-    }
-
-    // Getters and Setters
+    // Getters y setters
     public Long getCardId() {
         return cardId;
     }
 
     public void setCardId(Long cardId) {
         this.cardId = cardId;
-    }
-
-    public Long getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
     }
 
     public String getCardNumber() {
@@ -52,11 +28,11 @@ public class CreditCardDTO {
         this.cardNumber = cardNumber;
     }
 
-    public Date getExpirationDate() {
+    public String getExpirationDate() {
         return expirationDate;
     }
 
-    public void setExpirationDate(Date expirationDate) {
+    public void setExpirationDate(String expirationDate) {
         this.expirationDate = expirationDate;
     }
 
@@ -76,19 +52,27 @@ public class CreditCardDTO {
         this.cardType = cardType;
     }
 
-    public BigDecimal getCreditLimit() {
+    public Double getCreditLimit() {
         return creditLimit;
     }
 
-    public void setCreditLimit(BigDecimal creditLimit) {
+    public void setCreditLimit(Double creditLimit) {
         this.creditLimit = creditLimit;
     }
 
-    public BigDecimal getCurrentBalance() {
+    public Double getCurrentBalance() {
         return currentBalance;
     }
 
-    public void setCurrentBalance(BigDecimal currentBalance) {
+    public void setCurrentBalance(Double currentBalance) {
         this.currentBalance = currentBalance;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 }

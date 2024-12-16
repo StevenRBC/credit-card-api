@@ -24,18 +24,17 @@ public class CreditCardController {
     // GET: Retrieve all credit cards
     @GetMapping
     public ResponseEntity<List<CreditCardDTO>> getAllCreditCards() {
-        List<CreditCard> creditCards = creditCardService.getAllCreditCards();
-        List<CreditCardDTO> creditCardDTOs = creditCards.stream()
-                .map(CreditCardMapper::toCreditCardDTO)
+        List<CreditCardDTO> creditCards = creditCardService.getAllCreditCards().stream()
+                .map(CreditCardMapper::toDTO)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(creditCardDTOs);
+        return ResponseEntity.ok(creditCards);
     }
 
     // GET: Retrieve a specific credit card by ID
     @GetMapping("/{id}")
     public ResponseEntity<CreditCardDTO> getCreditCardById(@PathVariable Long id) {
         return creditCardService.getCreditCardById(id)
-                .map(CreditCardMapper::toCreditCardDTO)
+                .map(CreditCardMapper::toDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -43,16 +42,17 @@ public class CreditCardController {
     // POST: Create a new credit card
     @PostMapping
     public ResponseEntity<CreditCardDTO> createCreditCard(@RequestBody CreditCardDTO creditCardDTO) {
-        CreditCard creditCard = CreditCardMapper.toCreditCardEntity(creditCardDTO);
+        CreditCard creditCard = CreditCardMapper.toDomainFromDTO(creditCardDTO);
         CreditCard createdCreditCard = creditCardService.createCreditCard(creditCard);
-        return ResponseEntity.ok(CreditCardMapper.toCreditCardDTO(createdCreditCard));
+        return ResponseEntity.ok(CreditCardMapper.toDTO(createdCreditCard));
     }
 
     // PUT: Update a credit card by ID
     @PutMapping("/{id}")
     public ResponseEntity<CreditCardDTO> updateCreditCard(@PathVariable Long id, @RequestBody CreditCardDTO creditCardDTO) {
-        return creditCardService.updateCreditCard(id, CreditCardMapper.toCreditCardEntity(creditCardDTO))
-                .map(CreditCardMapper::toCreditCardDTO)
+        CreditCard updatedCreditCard = CreditCardMapper.toDomainFromDTO(creditCardDTO);
+        return creditCardService.updateCreditCard(id, updatedCreditCard)
+                .map(CreditCardMapper::toDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

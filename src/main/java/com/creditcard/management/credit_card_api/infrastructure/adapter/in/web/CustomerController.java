@@ -23,18 +23,17 @@ public class CustomerController {
     // GET: Retrieve all customers
     @GetMapping
     public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
-        List<Customer> customers = customerService.getAllCustomers();
-        List<CustomerDTO> customerDTOs = customers.stream()
-                .map(CustomerMapper::toCustomerDTO)
+        List<CustomerDTO> customers = customerService.getAllCustomers().stream()
+                .map(CustomerMapper::toDTO)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(customerDTOs);
+        return ResponseEntity.ok(customers);
     }
 
     // GET: Retrieve a specific customer by ID
     @GetMapping("/{id}")
     public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable Long id) {
         return customerService.getCustomerById(id)
-                .map(CustomerMapper::toCustomerDTO)
+                .map(CustomerMapper::toDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -42,16 +41,21 @@ public class CustomerController {
     // POST: Create a new customer
     @PostMapping
     public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO customerDTO) {
-        Customer customer = CustomerMapper.toCustomerEntity(customerDTO);
+        Customer customer = CustomerMapper.toDomainFromDTO(customerDTO);
         Customer createdCustomer = customerService.createCustomer(customer);
-        return ResponseEntity.ok(CustomerMapper.toCustomerDTO(createdCustomer));
+        return ResponseEntity.ok(CustomerMapper.toDTO(createdCustomer));
     }
 
     // PUT: Update a customer by ID
     @PutMapping("/{id}")
     public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) {
-        return customerService.updateCustomer(id, CustomerMapper.toCustomerEntity(customerDTO))
-                .map(CustomerMapper::toCustomerDTO)
+        Customer updatedCustomer = new Customer();
+        updatedCustomer.setFirstName(customerDTO.getFirstName());
+        updatedCustomer.setLastName(customerDTO.getLastName());
+        updatedCustomer.setEmail(customerDTO.getEmail());
+
+        return customerService.updateCustomer(id, updatedCustomer)
+                .map(CustomerMapper::toDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

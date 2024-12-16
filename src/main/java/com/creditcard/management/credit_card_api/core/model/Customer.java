@@ -1,38 +1,23 @@
 package com.creditcard.management.credit_card_api.core.model;
 
-import jakarta.persistence.*;
-
-import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "customer")
 public class Customer {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customer_id")
-    private Long customerId;
-
-    @Column(name = "first_name", nullable = false)
+    private Long id;
     private String firstName;
-
-    @Column(name = "last_name", nullable = false)
     private String lastName;
-
-    @Column(name = "email", nullable = false, unique = true)
     private String email;
+    private List<CreditCard> creditCards;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CreditCard> creditCards = new ArrayList<>();
+    public Customer() {}
 
-    // Getters and Setters
-    public Long getCustomerId() {
-        return customerId;
+    public Long getId() {
+        return id;
     }
 
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFirstName() {

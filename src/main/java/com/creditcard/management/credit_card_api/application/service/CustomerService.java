@@ -38,6 +38,8 @@ public class CustomerService {
             existingCustomer.setFirstName(updatedCustomer.getFirstName());
             existingCustomer.setLastName(updatedCustomer.getLastName());
             existingCustomer.setEmail(updatedCustomer.getEmail());
+
+            existingCustomer.setCreditCards(existingCustomer.getCreditCards());
             // Save and return updated customer
             return customerRepositoryPort.save(existingCustomer);
         });

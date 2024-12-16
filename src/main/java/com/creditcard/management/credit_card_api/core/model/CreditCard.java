@@ -1,56 +1,25 @@
 package com.creditcard.management.credit_card_api.core.model;
 
-import jakarta.persistence.*;
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.time.LocalDate;
-
-@Entity
-@Table(name = "creditcard")
 public class CreditCard {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "card_id")
-    private Long cardId;
-
-    @ManyToOne
-    @JoinColumn(name = "customer_id", nullable = false)
-    private Customer customer;
-
-    @Column(name = "card_number", nullable = false, unique = true)
+    private Long id;
     private String cardNumber;
-
-    @Column(name = "expiration_date", nullable = false)
-    private Date expirationDate;
-
-    @Column(name = "cvv", nullable = false)
+    private String expirationDate;
     private String cvv;
+    private String cardType;
+    private Double creditLimit;
+    private Double currentBalance;
+    private Long customerId;
 
-    @Column(name = "card_type", nullable = false)
-    private String cardType; // Example: "Credit" or "Debit"
-
-    @Column(name = "credit_limit", nullable = false, precision = 10, scale = 2)
-    private BigDecimal creditLimit;
-
-    @Column(name = "current_balance", nullable = false, precision = 10, scale = 2)
-    private BigDecimal currentBalance;
+    public CreditCard() {}
 
     // Getters and Setters
-    public Long getCardId() {
-        return cardId;
+    public Long getId() {
+        return id;
     }
 
-    public void setCardId(Long cardId) {
-        this.cardId = cardId;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getCardNumber() {
@@ -61,11 +30,11 @@ public class CreditCard {
         this.cardNumber = cardNumber;
     }
 
-    public Date getExpirationDate() {
+    public String getExpirationDate() {
         return expirationDate;
     }
 
-    public void setExpirationDate(Date expirationDate) {
+    public void setExpirationDate(String expirationDate) {
         this.expirationDate = expirationDate;
     }
 
@@ -85,19 +54,27 @@ public class CreditCard {
         this.cardType = cardType;
     }
 
-    public BigDecimal getCreditLimit() {
+    public Double getCreditLimit() {
         return creditLimit;
     }
 
-    public void setCreditLimit(BigDecimal creditLimit) {
+    public void setCreditLimit(Double creditLimit) {
         this.creditLimit = creditLimit;
     }
 
-    public BigDecimal getCurrentBalance() {
+    public Double getCurrentBalance() {
         return currentBalance;
     }
 
-    public void setCurrentBalance(BigDecimal currentBalance) {
+    public void setCurrentBalance(Double currentBalance) {
         this.currentBalance = currentBalance;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 }
