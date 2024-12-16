@@ -1,10 +1,9 @@
 package com.creditcard.management.credit_card_api.infrastructure.adapter.in.web;
 
-
 import com.creditcard.management.credit_card_api.application.dto.CustomerDTO;
 import com.creditcard.management.credit_card_api.application.mapper.CustomerMapper;
+import com.creditcard.management.credit_card_api.application.service.CustomerService;
 import com.creditcard.management.credit_card_api.core.model.Customer;
-import com.creditcard.management.credit_card_api.infrastructure.adapter.out.persistence.CustomerRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,16 +14,16 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/customers")
 public class CustomerController {
 
-    private final CustomerRepository customerRepository;
+    private final CustomerService customerService;
 
-    public CustomerController(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
     }
 
     // GET: Retrieve all customers
     @GetMapping
     public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
-        List<Customer> customers = customerRepository.findAll();
+        List<Customer> customers = customerService.getAllCustomers();
         List<CustomerDTO> customerDTOs = customers.stream()
                 .map(CustomerMapper::toCustomerDTO)
                 .collect(Collectors.toList());
@@ -34,7 +33,7 @@ public class CustomerController {
     // GET: Retrieve a specific customer by ID
     @GetMapping("/{id}")
     public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable Long id) {
-        return customerRepository.findById(id)
+        return customerService.getCustomerById(id)
                 .map(CustomerMapper::toCustomerDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -44,41 +43,25 @@ public class CustomerController {
     @PostMapping
     public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO customerDTO) {
         Customer customer = CustomerMapper.toCustomerEntity(customerDTO);
+        Customer createdCustomer = customerService.createCustomer(customer);
+        return ResponseEntity.ok(CustomerMapper.toCustomerDTO(createdCustomer));
+    }
 
-        if (customer.getCreditCards() != null) {
-            customer.getCreditCards().forEach(card -> card.setCustomer(customer)); // Establecer la relación
-        }
-
-        Customer savedCustomer = customerRepository.save(customer);
-
-        CustomerDTO savedCustomerDTO = CustomerMapper.toCustomerDTO(savedCustomer);
-
-        return ResponseEntity.ok(savedCustomerDTO);
+    // PUT: Update a customer by ID
+    @PutMapping("/{id}")
+    public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) {
+        return customerService.updateCustomer(id, CustomerMapper.toCustomerEntity(customerDTO))
+                .map(CustomerMapper::toCustomerDTO)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // DELETE: Delete a customer by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
-        if (customerRepository.existsById(id)) {
-            customerRepository.deleteById(id);
+        if (customerService.deleteCustomer(id)) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
-    }
-
-    // UPDATE: Update a customer by ID
-
-    @PutMapping("/{id}")
-    public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) {
-        return customerRepository.findById(id)
-                .map(existingCustomer -> {
-                    existingCustomer.setFirstName(customerDTO.getFirstName());
-                    existingCustomer.setLastName(customerDTO.getLastName());
-                    existingCustomer.setEmail(customerDTO.getEmail());
-
-                    Customer updatedCustomer = customerRepository.save(existingCustomer);
-                    return ResponseEntity.ok(CustomerMapper.toCustomerDTO(updatedCustomer));
-                })
-                .orElse(ResponseEntity.notFound().build());
     }
 }

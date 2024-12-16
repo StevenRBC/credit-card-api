@@ -15,9 +15,6 @@ public class CreditCardDTO {
     private BigDecimal creditLimit;
     private BigDecimal currentBalance;
 
-    // Constructors
-    public CreditCardDTO() {}
-
     public CreditCardDTO(Long cardId, Long customerId, String cardNumber, Date expirationDate, String cvv,
                          String cardType, BigDecimal creditLimit, BigDecimal currentBalance) {
         this.cardId = cardId;

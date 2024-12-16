@@ -10,4 +10,5 @@ public interface CreditCardRepositoryPort {
     Optional<CreditCard> findById(Long id);
     CreditCard save(CreditCard creditCard);
     void deleteById(Long id);
+    boolean existsById(Long id);
 }

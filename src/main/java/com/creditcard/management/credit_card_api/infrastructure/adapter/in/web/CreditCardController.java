@@ -2,9 +2,9 @@ package com.creditcard.management.credit_card_api.infrastructure.adapter.in.web;
 
 
 import com.creditcard.management.credit_card_api.application.dto.CreditCardDTO;
-import com.creditcard.management.credit_card_api.application.mapper.CustomerMapper;
+import com.creditcard.management.credit_card_api.application.mapper.CreditCardMapper;
+import com.creditcard.management.credit_card_api.application.service.CreditCardService;
 import com.creditcard.management.credit_card_api.core.model.CreditCard;
-import com.creditcard.management.credit_card_api.infrastructure.adapter.out.persistence.CreditCardRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,63 +15,54 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/credit-cards")
 public class CreditCardController {
 
-    private final CreditCardRepository creditCardRepository;
+    private final CreditCardService creditCardService;
 
-    public CreditCardController(CreditCardRepository creditCardRepository) {
-        this.creditCardRepository = creditCardRepository;
+    public CreditCardController(CreditCardService creditCardService) {
+        this.creditCardService = creditCardService;
     }
 
     // GET: Retrieve all credit cards
     @GetMapping
     public ResponseEntity<List<CreditCardDTO>> getAllCreditCards() {
-        List<CreditCard> creditCards = creditCardRepository.findAll();
+        List<CreditCard> creditCards = creditCardService.getAllCreditCards();
         List<CreditCardDTO> creditCardDTOs = creditCards.stream()
-                .map(CustomerMapper::toCreditCardDTO)
+                .map(CreditCardMapper::toCreditCardDTO)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(creditCardDTOs);
+    }
+
+    // GET: Retrieve a specific credit card by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<CreditCardDTO> getCreditCardById(@PathVariable Long id) {
+        return creditCardService.getCreditCardById(id)
+                .map(CreditCardMapper::toCreditCardDTO)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // POST: Create a new credit card
     @PostMapping
     public ResponseEntity<CreditCardDTO> createCreditCard(@RequestBody CreditCardDTO creditCardDTO) {
-        // Convert DTO to Entity
-        CreditCard creditCard = CustomerMapper.toCreditCardEntity(creditCardDTO);
+        CreditCard creditCard = CreditCardMapper.toCreditCardEntity(creditCardDTO);
+        CreditCard createdCreditCard = creditCardService.createCreditCard(creditCard);
+        return ResponseEntity.ok(CreditCardMapper.toCreditCardDTO(createdCreditCard));
+    }
 
-        // Save the credit card entity
-        CreditCard savedCreditCard = creditCardRepository.save(creditCard);
-
-        // Convert back to DTO
-        CreditCardDTO savedCreditCardDTO = CustomerMapper.toCreditCardDTO(savedCreditCard);
-
-        return ResponseEntity.ok(savedCreditCardDTO);
+    // PUT: Update a credit card by ID
+    @PutMapping("/{id}")
+    public ResponseEntity<CreditCardDTO> updateCreditCard(@PathVariable Long id, @RequestBody CreditCardDTO creditCardDTO) {
+        return creditCardService.updateCreditCard(id, CreditCardMapper.toCreditCardEntity(creditCardDTO))
+                .map(CreditCardMapper::toCreditCardDTO)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // DELETE: Delete a credit card by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCreditCard(@PathVariable Long id) {
-        if (creditCardRepository.existsById(id)) {
-            creditCardRepository.deleteById(id);
+        if (creditCardService.deleteCreditCard(id)) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
-    }
-
-    //UPDATE: Update a credit card by ID
-
-    @PutMapping("/{id}")
-    public ResponseEntity<CreditCardDTO> updateCreditCard(@PathVariable Long id, @RequestBody CreditCardDTO creditCardDTO) {
-        return creditCardRepository.findById(id)
-                .map(existingCreditCard -> {
-                    existingCreditCard.setCardNumber(creditCardDTO.getCardNumber());
-                    existingCreditCard.setExpirationDate(creditCardDTO.getExpirationDate());
-                    existingCreditCard.setCvv(creditCardDTO.getCvv());
-                    existingCreditCard.setCardType(creditCardDTO.getCardType());
-                    existingCreditCard.setCreditLimit(creditCardDTO.getCreditLimit());
-                    existingCreditCard.setCurrentBalance(creditCardDTO.getCurrentBalance());
-
-                    CreditCard updatedCreditCard = creditCardRepository.save(existingCreditCard);
-                    return ResponseEntity.ok(CustomerMapper.toCreditCardDTO(updatedCreditCard));
-                })
-                .orElse(ResponseEntity.notFound().build());
     }
 }

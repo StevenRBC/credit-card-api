@@ -10,9 +10,6 @@ public class CustomerDTO {
     private String email;
     private List<CreditCardDTO> creditCards;
 
-    // Constructors
-    public CustomerDTO() {}
-
     public CustomerDTO(Long customerId, String firstName, String lastName, String email, List<CreditCardDTO> creditCards) {
         this.customerId = customerId;
         this.firstName = firstName;
