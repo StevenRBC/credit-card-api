@@ -7,31 +7,62 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service class for managing customer operations.
+ * This class contains the business logic related to customers
+ * and interacts with the persistence layer through the CustomerRepositoryPort.
+ */
 @Service
 public class CustomerService {
 
     private final CustomerRepositoryPort customerRepositoryPort;
 
+    /**
+     * Constructor to initialize the service with the repository port.
+     *
+     * @param customerRepositoryPort The port interface for customer repository operations.
+     */
     public CustomerService(CustomerRepositoryPort customerRepositoryPort) {
         this.customerRepositoryPort = customerRepositoryPort;
     }
 
-    // Retrieve all customers
+    /**
+     * Retrieves all customers from the repository.
+     *
+     * @return A list of all Customer objects.
+     */
     public List<Customer> getAllCustomers() {
         return customerRepositoryPort.findAll();
     }
 
-    // Retrieve a specific customer by ID
+    /**
+     * Retrieves a specific customer by their unique identifier.
+     *
+     * @param id The unique identifier of the customer.
+     * @return An Optional containing the Customer if found, or empty if not.
+     */
     public Optional<Customer> getCustomerById(Long id) {
         return customerRepositoryPort.findById(id);
     }
 
-    // Create a new customer
+    /**
+     * Creates a new customer in the repository.
+     *
+     * @param customer The Customer object to create.
+     * @return The saved Customer object.
+     */
     public Customer createCustomer(Customer customer) {
         return customerRepositoryPort.save(customer);
     }
 
-    // Update an existing customer
+    /**
+     * Updates an existing customer in the repository.
+     * If the customer exists, their fields are updated and saved.
+     *
+     * @param id The unique identifier of the customer to update.
+     * @param updatedCustomer The Customer object containing updated values.
+     * @return An Optional containing the updated Customer if the ID exists, or empty if not.
+     */
     public Optional<Customer> updateCustomer(Long id, Customer updatedCustomer) {
         return customerRepositoryPort.findById(id).map(existingCustomer -> {
             // Update fields of the existing customer
@@ -39,18 +70,25 @@ public class CustomerService {
             existingCustomer.setLastName(updatedCustomer.getLastName());
             existingCustomer.setEmail(updatedCustomer.getEmail());
 
+            // Ensure existing credit cards remain unchanged
             existingCustomer.setCreditCards(existingCustomer.getCreditCards());
-            // Save and return updated customer
+
+            // Save and return the updated customer
             return customerRepositoryPort.save(existingCustomer);
         });
     }
 
-    // Delete a customer by ID
+    /**
+     * Deletes a customer from the repository by their unique identifier.
+     *
+     * @param id The unique identifier of the customer to delete.
+     * @return True if the customer was successfully deleted, false if they do not exist.
+     */
     public boolean deleteCustomer(Long id) {
-        if (customerRepositoryPort.existsById(id)) { // Check if the customer exists
-            customerRepositoryPort.deleteById(id); // Perform the deletion
-            return true; // Return true if the customer was successfully deleted
+        if (customerRepositoryPort.existsById(id)) {
+            customerRepositoryPort.deleteById(id);
+            return true;
         }
-        return false; // Return false if the customer was not found
+        return false;
     }
 }

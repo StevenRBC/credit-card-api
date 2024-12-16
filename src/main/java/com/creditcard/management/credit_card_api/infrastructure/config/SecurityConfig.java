@@ -8,26 +8,49 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+/**
+ * Configuration class for Spring Security.
+ * Configures CORS and CSRF settings and defines security rules for HTTP requests.
+ */
 @Configuration
 public class SecurityConfig {
 
+    /**
+     * Configures the Spring Security filter chain.
+     * - Enables CORS (Cross-Origin Resource Sharing).
+     * - Disables CSRF (Cross-Site Request Forgery) protection (intended for development environments).
+     * - Allows all HTTP requests without restrictions.
+     *
+     * @param http The HttpSecurity object for configuring security settings.
+     * @return A SecurityFilterChain defining the security rules.
+     * @throws Exception If an error occurs while configuring security.
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors().and() // Habilita CORS
-                .csrf().disable() // Desactiva CSRF (solo en desarrollo)
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()); // Permite todas las solicitudes
+                .cors().and()
+                .csrf().disable()
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
         return http.build();
     }
 
+    /**
+     * Configures a CORS filter.
+     * - Allows all origins, HTTP methods, and headers.
+     * - Credentials (e.g., cookies) are disabled.
+     *
+     * This configuration is applied globally to all endpoints.
+     *
+     * @return A CorsFilter bean for handling CORS configuration.
+     */
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOriginPattern("*"); // Permite todos los orígenes
-        config.addAllowedMethod("*"); // Permite todos los métodos HTTP
-        config.addAllowedHeader("*"); // Permite todas las cabeceras
-        config.setAllowCredentials(false); // Deshabilita credenciales
+        config.addAllowedOriginPattern("*");
+        config.addAllowedMethod("*");
+        config.addAllowedHeader("*");
+        config.setAllowCredentials(false);
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }

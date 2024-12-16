@@ -7,9 +7,21 @@ import com.creditcard.management.credit_card_api.infrastructure.adapter.out.pers
 
 import java.sql.Date;
 
+/**
+ * Mapper class for converting between different representations of CreditCard data.
+ * This class facilitates transformations between:
+ *  - Persistence layer (CreditCardEntity)
+ *  - Domain model (CreditCard)
+ *  - Data Transfer Object (CreditCardDTO)
+ */
 public class CreditCardMapper {
 
-    // Convertir de CreditCardEntity a CreditCard (persistencia → modelo de negocio)
+    /**
+     * Converts a CreditCardEntity (persistence layer) to a CreditCard (domain model).
+     *
+     * @param entity The CreditCardEntity to convert.
+     * @return The corresponding CreditCard domain object, or null if the input is null.
+     */
     public static CreditCard toDomain(CreditCardEntity entity) {
         if (entity == null) return null;
 
@@ -28,7 +40,12 @@ public class CreditCardMapper {
         return creditCard;
     }
 
-    // Convertir de CreditCard a CreditCardEntity (modelo de negocio → persistencia)
+    /**
+     * Converts a CreditCard (domain model) to a CreditCardEntity (persistence layer).
+     *
+     * @param creditCard The CreditCard domain object to convert.
+     * @return The corresponding CreditCardEntity, or null if the input is null.
+     */
     public static CreditCardEntity toEntity(CreditCard creditCard) {
         if (creditCard == null) return null;
 
@@ -52,7 +69,12 @@ public class CreditCardMapper {
         return entity;
     }
 
-    // Convertir de CreditCard a CreditCardDTO (modelo de negocio → DTO)
+    /**
+     * Converts a CreditCard (domain model) to a CreditCardDTO (Data Transfer Object).
+     *
+     * @param creditCard The CreditCard domain object to convert.
+     * @return The corresponding CreditCardDTO, or null if the input is null.
+     */
     public static CreditCardDTO toDTO(CreditCard creditCard) {
         if (creditCard == null) return null;
 
@@ -69,7 +91,12 @@ public class CreditCardMapper {
         return dto;
     }
 
-    // Convertir de CreditCardDTO a CreditCard (DTO → modelo de negocio)
+    /**
+     * Converts a CreditCardDTO (Data Transfer Object) to a CreditCard (domain model).
+     *
+     * @param dto The CreditCardDTO to convert.
+     * @return The corresponding CreditCard domain object, or null if the input is null.
+     */
     public static CreditCard toDomainFromDTO(CreditCardDTO dto) {
         if (dto == null) return null;
 
