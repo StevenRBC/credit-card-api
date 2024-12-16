@@ -69,6 +69,7 @@ public class CreditCardService {
             existingCreditCard.setCardNumber(updatedCreditCard.getCardNumber());
             existingCreditCard.setExpirationDate(updatedCreditCard.getExpirationDate());
             existingCreditCard.setCvv(updatedCreditCard.getCvv());
+            existingCreditCard.setCardType(updatedCreditCard.getCardType());
             existingCreditCard.setCreditLimit(updatedCreditCard.getCreditLimit());
             existingCreditCard.setCurrentBalance(updatedCreditCard.getCurrentBalance());
             // Save and return the updated credit card
